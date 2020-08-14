@@ -4,8 +4,15 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 
 void main() {
+  // 增加详细的错误日志
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.dumpErrorToConsole(details);
+    if (kReleaseMode)
+      exit(1);
+  };
   runApp(MyApp());
 }
 
@@ -40,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //用户通过摄像头或图片库选择的照片
   File _image;
   //记录接口返回的颜值信息或错误提示
-  var _faceInfo;
+  var _faceInfo = null;
   //记录用户返回的错误码：0 表示成功，其他表示错误
   var _errorCode;
 
@@ -57,6 +64,10 @@ class _MyHomePageState extends State<MyHomePage> {
     print(image);
 
     getFactInfo();
+    // 休眠5秒
+//    sleep(Duration(seconds:5));
+//    print("5s task");
+
   }
 
   // 调用API 获取颜值信息
@@ -159,8 +170,14 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  Text(_faceInfo,
-                  textAlign: TextAlign.center)
+                  Expanded(
+                      child: Text(_faceInfo == null ? "loading...": _faceInfo,
+                        textAlign: TextAlign.center,
+                         style: TextStyle(
+                           fontSize: 20,
+                           color: Colors.black,
+                        ),)
+                  )
                 ],
               )
             ]
