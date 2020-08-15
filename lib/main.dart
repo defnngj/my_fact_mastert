@@ -77,15 +77,15 @@ class _MyHomePageState extends State<MyHomePage> {
     var url= 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=5EPDjkewL4EPkDLgC7hRgtg4&client_secret=Muc5n4a8LLmNA1cExaTnSMLFdpsivwp7';
     Response response = await dio.post(url);
 
-    var access_token = response.data['access_token'];
-    print(access_token);
+    var _accessToken = response.data['access_token'];
+    print(_accessToken);
 
     // 把图片从file 类型转为 base64 字符串类型
     List<int> imageBytes = await _image.readAsBytes();
     var base64Img = base64Encode(imageBytes);
 
     // 调用颜值检测API
-    var url2 = "https://aip.baidubce.com/rest/2.0/face/v3/detect?access_token="+access_token;
+    var url2 = "https://aip.baidubce.com/rest/2.0/face/v3/detect?access_token="+_accessToken;
     var faceInfoResult = await dio.post(url2, options: new Options(contentType: "application/json"),
         data: {
           'image': base64Img,
@@ -96,7 +96,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
     print("--face info result----------->");
     print(faceInfoResult);
-    print("----------->");
 
     if(faceInfoResult.data["error_msg"] == "SUCCESS") {
       setState(() {
@@ -157,9 +156,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget renderBox() {
+    // 没有显示脸部信息，显示错误
     if(_errorCode != 0){
-      print("aaaa");
-      print(_faceInfo);
       return Center(
         child: Container(
           color: Colors.white54,
@@ -185,9 +183,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       );
-    } else {
-      print("bbbb");
-      print(_faceInfo);
+    } else {  //展示脸部信息
       return Center(
         child: Container(
           color: Colors.white54,
